@@ -4,7 +4,7 @@ import me.yourname.customchaos.SubCommand;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.Particle;
+import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -18,7 +18,7 @@ public class SlapCommand implements SubCommand {
 
     @Override
     public String getDescription() {
-        return "Slaps a target player with a burst of knockback.";
+        return "Slaps a player, knocking them backward away from your view direction.";
     }
 
     @Override
@@ -33,20 +33,32 @@ public class SlapCommand implements SubCommand {
             return;
         }
 
-        Player target = Bukkit.getPlayerExact(args[1]);
-        if (target == null) {
-            player.sendMessage(Component.text("Player '" + args[1] + "' is not online.", NamedTextColor.RED));
+        String targetName = args[1];
+        Player target = Bukkit.getPlayerExact(targetName);
+
+        if (target == null || !target.isOnline()) {
+            player.sendMessage(Component.text("Player '" + targetName + "' is not online.", NamedTextColor.RED));
             return;
         }
 
-        Vector direction = target.getLocation().toVector().subtract(player.getLocation().toVector()).normalize();
-        direction.setY(0.5);
-        target.setVelocity(direction.multiply(1.5));
+        Location senderLoc = player.getLocation();
+        Vector pushDirection = senderLoc.getDirection().normalize();
 
-        target.getWorld().spawnParticle(Particle.SWEEP_ATTACK, target.getLocation().add(0, 1, 0), 3);
+        // Push away from sender's look vector, with a strong upward component for a "slap" arc.
+        double horizontalStrength = 1.5;
+        double verticalStrength = 0.6;
+
+        Vector knockback = new Vector(
+                pushDirection.getX() * horizontalStrength,
+                verticalStrength,
+                pushDirection.getZ() * horizontalStrength
+        );
+
+        target.setVelocity(knockback);
+
         target.getWorld().playSound(target.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
 
-        target.sendMessage(Component.text(player.getName() + " slapped you!", NamedTextColor.YELLOW));
-        player.sendMessage(Component.text("You slapped " + target.getName() + ".", NamedTextColor.GREEN));
+        player.sendMessage(Component.text("You slapped " + target.getName() + "!", NamedTextColor.GREEN));
+        target.sendMessage(Component.text(player.getName() + " slapped you!", NamedTextColor.RED));
     }
 }
