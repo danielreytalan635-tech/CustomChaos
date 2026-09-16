@@ -1,0 +1,26 @@
+name: CustomChaos
+version: '1.0.0'
+main: me.yourname.customchaos.CustomChaosMain
+api-version: '1.21'
+author: YourName
+description: A massive multi-command chaos/prank plugin for Paper servers.
+
+commands:
+  chaos:
+    description: Base command for all CustomChaos subcommands.
+    usage: /chaos <subcommand> [args...]
+    permission: chaos.use
+
+permissions:
+  chaos.use:
+    description: Allows use of the base /chaos command and standard subcommands.
+    default: true
+  chaos.sudo:
+    description: Allows use of /chaos sudo to dispatch a command as console.
+    default: op
+  chaos.broadcast:
+    description: Allows use of /chaos broadcast to message the whole server.
+    default: op
+  chaos.freeze:
+    description: Allows use of /chaos keyboarddisconnect to freeze a player's movement.
+    default: op
