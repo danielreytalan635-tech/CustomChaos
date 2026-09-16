@@ -1,5 +1,6 @@
 package me.yourname.customchaos;
 
+import me.yourname.customchaos.commands.*; // Imports all commands from the commands folder
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.Command;
