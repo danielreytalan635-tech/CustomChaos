@@ -39,8 +39,14 @@ public class HealanimationCommand implements SubCommand {
             target = found;
         }
 
-        double maxHealth = target.getAttribute(Attribute.MAX_HEALTH).getValue();
-        target.setHealth(maxHealth);
+        // Fixed: Updated old attribute reference to match modern Paper/Mojang specifications
+        if (target.getAttribute(Attribute.GENERIC_MAX_HEALTH) != null) {
+            double maxHealth = target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+            target.setHealth(maxHealth);
+        } else {
+            target.setHealth(20.0);
+        }
+        
         target.setFoodLevel(20);
 
         target.getWorld().spawnParticle(Particle.HEART, target.getLocation().add(0, 1.5, 0), 10, 0.4, 0.4, 0.4, 0.01);
